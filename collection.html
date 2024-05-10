@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA TIME</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="image-logo">
+                <a href="home.html"><h3 class="brand-title">Nova <span class="brand-title-span">Time</span></h3></a>
+            </div>
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="home.html#about">About</a>
+                <a href="home.html#contact">Contact</a>
+                <a href="collection.html">Collection</a>
+            </div>
+        </nav>
+    </header>
+
+    <div id="search-container">
+        <div>
+         <input type="text" id="search" placeholder="Search...">
+        </div>
+     </div>
+     
+     <div id="filter">
+         <div id="left">
+             <table>
+                 <tr>
+                     <td><label for="">Category:</label> </td>
+                     <td>
+                         <select id="filter-select" onchange="filterProductsByCategory()">
+                             <option value="">All</option>
+                             <option value="Rolex">Rolex</option>
+                             <option value="Omega">Omega</option>
+                             <option value="Tag Heuer">Tag Heuer</option>
+                         </select>
+                     </td>
+                 </tr>
+             </table>
+         </div>
+         <div id="right">
+             <table>
+                 <tr>
+                     <td>
+                         <label for="">Price: </label>
+                     </td>
+                     <td>
+                         <select id="sort-select" onchange="sortProducts()">
+                             <option value="asc">Ascending</option>
+                             <option value="desc">Descending</option>
+                         </select>
+                     </td>
+                 </tr>
+             </table>
+         </div>
+     </div>
+
+     <div id="product-container">
+     
+     </div>
+     
+
+     <script>
+        function loadProducts() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    displayProducts(this);
+                    filterProducts(); // Apply filtering onload
+                    sortProducts(); // Apply sorting onload
+                }
+            };
+            xhttp.open("GET", "data.xml", true);
+            xhttp.send();
+        }
+    
+        function displayProducts(xml) {
+            var xmlDoc = xml.responseXML;
+            var watches = xmlDoc.getElementsByTagName("watch");
+            var container = document.getElementById("product-container");
+            container.innerHTML = ""; // Clear previous content
+            container.style.display = "flex";
+            container.style.justifyContent = "space-evenly";
+            container.style.alignItems = "center";
+            
+            
+            for (var i = 0; i < watches.length; i++) {
+                var brand = watches[i].getElementsByTagName("brand")[0].childNodes[0].nodeValue;
+                var model = watches[i].getElementsByTagName("model")[0].childNodes[0].nodeValue;
+                var image = watches[i].getElementsByTagName("image")[0].childNodes[0].nodeValue;
+                var price = watches[i].getElementsByTagName("price")[0].childNodes[0].nodeValue;
+    
+                // Create a product div
+                var productDiv = document.createElement("div");
+                productDiv.classList.add("watch");
+                productDiv.style.height = "400px";
+                productDiv.style.width = "300px";
+                productDiv.style.background = "grey";
+                productDiv.style.textAlign = "center";
+
+                // Create an image element
+                var img = document.createElement("img");
+                img.src = image;
+                img.alt = brand + " " + model;
+                img.style.width = "250px"; // Set width
+                img.style.height = "250px"; // Set height
+                // img.style.border = "1px solid black";
+                img.style.margin = "20px";
+    
+                // Create a div for product details
+                var detailsDiv = document.createElement("div");
+                detailsDiv.classList.add("product-details");
+    
+                // Add product details to the details div
+                detailsDiv.innerHTML = `
+                    <div class="product-name" >${brand} <br> ${model}</div>
+                    <div>Price: ${price}</div>
+                `;
+    
+                // Append image and details to the product div
+                productDiv.appendChild(img);
+                productDiv.appendChild(detailsDiv);
+    
+                // Append the product div to the container
+                container.appendChild(productDiv);
+            }
+        }
+    
+        // function filterProducts() {
+        //     var input, filter, products, i, brand;
+        //     input = document.getElementById("search");
+        //     filter = input.value.toUpperCase();
+        //     products = document.getElementsByClassName("watch");
+        //     for (i = 0; i < products.length; i++) {
+        //         brand = products[i].getElementsByClassName("product-details")[0].getElementsByClassName("product-name")[0].innerText.toUpperCase();
+        //         if (brand.indexOf(filter) > -1) {
+        //             products[i].style.display = "";
+        //         } else {
+        //             products[i].style.display = "none";
+        //         }
+        //     }
+        // }
+
+        // function filterProducts() {
+        //     var input, filter, products, i, brand;
+        //     input = document.getElementById("search");
+        //     filter = input.value.toUpperCase();
+        //     products = document.getElementsByClassName("watch");
+        //     for (i = 0; i < products.length; i++) {
+        //         brand = products[i].getElementsByClassName("product-brand")[0].innerText.toUpperCase();
+        //         if (brand.indexOf(filter) > -1) {
+        //             products[i].style.display = "";
+        //         } else {
+        //             products[i].style.display = "none";
+        //         }
+        //     }
+        // }
+        document.getElementById("search").addEventListener("keyup", angeles);
+    
+        function angeles() {
+        var input, filter, products, i, productName, category;
+        input = document.getElementById("search");
+        filter = input.value.toUpperCase();
+        var selectedCategory = document.getElementById("filter-select").value.toUpperCase();
+        var sortOrder = document.getElementById("sort-select").value;
+        products = document.getElementsByClassName("watch");
+        for (i = 0; i < products.length; i++) {
+            productName = products[i].getElementsByClassName("product-details")[0].getElementsByClassName("product-name")[0].innerText.toUpperCase();
+            category = products[i].getElementsByClassName("product-details")[0].getElementsByTagName("div")[2].innerText.toUpperCase();
+            var meetsSearchCriteria = productName.indexOf(filter) > -1;
+            var meetsCategoryCriteria = selectedCategory === '' || category.indexOf(selectedCategory) > -1;
+            if (meetsSearchCriteria && meetsCategoryCriteria) {
+                products[i].style.display = "block";
+            } else {
+                products[i].style.display = "none";
+            }
+        }
+    }
+
+        function filterProductsByCategory() {
+            var select, category, products, i;
+            select = document.getElementById("filter-select");
+            category = select.value.toUpperCase();
+            products = document.getElementsByClassName("watch");
+            for (i = 0; i < products.length; i++) {
+                var brand = products[i].getElementsByClassName("product-name")[0].innerText.toUpperCase();
+                if (category === '' || brand.indexOf(category) > -1) {
+                    products[i].style.display = "";
+                } else {
+                    products[i].style.display = "none";
+                }
+            }
+        }
+
+    
+        function sortProducts() {
+            var container, products, switching, i, shouldSwitch;
+            var order = document.getElementById("sort-select").value;
+            container = document.getElementById("product-container");
+            switching = true;
+            while (switching) {
+                switching = false;
+                products = container.getElementsByClassName("watch");
+                for (i = 0; i < (products.length - 1); i++) {
+                    var currentProduct = products[i].getElementsByClassName("product-details")[0];
+                    var nextProduct = products[i + 1].getElementsByClassName("product-details")[0];
+                    var currentPrice = parseFloat(currentProduct.getElementsByTagName("div")[1].innerText.split(":")[1]);
+                    var nextPrice = parseFloat(nextProduct.getElementsByTagName("div")[1].innerText.split(":")[1]);
+                    if (order === 'asc' ? (currentPrice > nextPrice) : (currentPrice < nextPrice)) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    products[i].parentNode.insertBefore(products[i + 1], products[i]);
+                    switching = true;
+                }
+            }
+        }
+    
+        // Load products when the page is loaded
+        window.onload = function() {
+            loadProducts();
+        };
+    </script>
+
+
+</body>
+</html>

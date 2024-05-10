@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="transform.xsl"?>
+<watches>
+    <watch>
+        <image>image/AL-525TB4AE6B.jpeg</image>
+        <brand>Rolex</brand>
+        <model>Submariner</model>
+        <price>10000</price>
+        <category>Luxury</category>
+    </watch>
+    <watch>
+        <image>image/AL-525NW4S26.jpeg</image>
+        <brand>Omega</brand>
+        <model>Speedmaster</model>
+        <price>6000</price>
+        <category>Luxury</category>
+    </watch>
+    <watch>
+        <image>image/AL-525G4TS26.jpeg</image>
+        <brand>Tag Heuer</brand>
+        <model>Carrera</model>
+        <price>4500</price>
+        <category>Sport</category>
+    </watch>
+</watches>
